@@ -1,0 +1,22 @@
+{
+  "name": "leaflet-learning",
+  "version": "1.0.0",
+  "description": "leaflet-learning",
+  "main": "index.js",
+  "scripts": {
+    "serve": "serve "
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yyf1994gggg/leaflet-learning.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yyf1994gggg/leaflet-learning/issues"
+  },
+  "homepage": "https://github.com/yyf1994gggg/leaflet-learning#readme",
+  "devDependencies": {
+    "serve": "^12.0.0"
+  }
+}
