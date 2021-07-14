@@ -1,0 +1,22 @@
+
+
+<html>
+    <head>
+    <title>my ejs template</title>
+    </head>
+    
+    <body>
+         
+        <p>DEMO 列表</p>
+        <ul>
+            <% itemList.forEach(function(item){%>
+                    <li> 
+
+                    <a href="<%=item  %>"><%=item  %></a>   1
+
+                </li>
+
+            <% }) %>
+        </ul>
+    </body>
+    </html>

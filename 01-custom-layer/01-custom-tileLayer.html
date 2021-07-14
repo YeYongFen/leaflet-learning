@@ -33,7 +33,7 @@
         L.TileLayer.Animal = L.TileLayer.extend({
             getTileUrl: function(coords) {
                 var i = Date.now() % 7  + 1 ;
-                return "https://raw.githubusercontent.com/yyf1994gggg/leaflet-learning/main/image/"+ i +".jpg"  ;
+                return "../image/"+ i +".jpg"  ;
             },
         });    
 
@@ -41,7 +41,9 @@
             return new L.TileLayer.Animal();
         }
     
-        map.addLayer( L.tileLayer.Animal() );
+        map.addLayer( L.tileLayer.Animal() );      
+
+
         
     </script>
     

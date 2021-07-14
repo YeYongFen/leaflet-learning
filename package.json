@@ -4,7 +4,11 @@
   "description": "leaflet-learning",
   "main": "index.js",
   "scripts": {
-    "serve": "serve "
+    "watch": "node watch.js   ",
+    "serve": " serve ./dist   ",
+    "build": "node build.js" ,
+    "login" : "cloudbase  login" , 
+    "public" : "cloudbase hosting:deploy ./dist leaflet-demo -e learning-5gx6cecp931d24b9    "
   },
   "repository": {
     "type": "git",
@@ -17,6 +21,9 @@
   },
   "homepage": "https://github.com/yyf1994gggg/leaflet-learning#readme",
   "devDependencies": {
-    "serve": "^12.0.0"
+    "@cloudbase/cli": "^1.8.0",
+    "ejs": "^3.1.6",
+    "serve": "^12.0.0",
+    "watch": "^1.0.2"
   }
 }

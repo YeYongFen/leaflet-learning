@@ -27,13 +27,13 @@
         var map = L.map('map', {
             crs: L.CRS.Simple,
             center: [0, 0],
-            zoom: 5
+            zoom: 3
         });
     
         L.GridLayer.DebugCoords = L.GridLayer.extend({
             createTile: function (coords) {
                 var tile = document.createElement('div');
-                tile.innerHTML = [coords.x, coords.y, coords.z].join(', ');
+                tile.innerHTML = ['x:'+ coords.x, 'y:'+coords.y, 'zoom:'+coords.z].join('， ');
                 tile.style.outline = '1px solid red';
                 return tile;
             }
