@@ -30,19 +30,21 @@
             zoom: 5
         });
     
-        L.TileLayer.Animal = L.TileLayer.extend({
-            getTileUrl: function(coords) {
-                var i = Date.now() % 7  + 1 ;
-                return "https://raw.githubusercontent.com/yyf1994gggg/leaflet-learning/main/image/"+ i +".jpg"  ;
-            },
-        });    
+        L.GridLayer.DebugCoords = L.GridLayer.extend({
+            createTile: function (coords) {
+                var tile = document.createElement('div');
+                tile.innerHTML = [coords.x, coords.y, coords.z].join(', ');
+                tile.style.outline = '1px solid red';
+                return tile;
+            }
+        });
 
-        L.tileLayer.Animal = function() {
-            return new L.TileLayer.Animal();
-        }
-    
-        map.addLayer( L.tileLayer.Animal() );
-        
+        L.gridLayer.debugCoords = function(opts) {
+            return new L.GridLayer.DebugCoords(opts);
+        };
+
+        map.addLayer( L.gridLayer.debugCoords() );
+                
     </script>
     
     
