@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="../resources/leaflet-src.js"></script>
+    <link href="../resources/leaflet.css" rel="stylesheet">
+
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+        }
+
+        #map {
+            width: 500px;
+            height: 500px;
+
+            margin-top: 40px;
+            margin-left: 40px;
+        }
+
+        .box {
+            border: 1px solid orange;
+
+        }
+
+        .textBox {
+            position: absolute;
+            z-index: 88888;
+            left: 130px;
+            top: 130px;
+
+        }
+    </style>
+
+    <title>Document</title>
+</head>
+
+<body>
+
+    <div id='map'></div>
+
+    <div id="text"></div>
+
+
+    <script type="text/javascript">
+
+        var map = L.map('map', {
+            center: ['70.72897946208789', '-74.0625'],
+            zoom: 3
+        });
+
+        var timer = null;
+
+        L.TileLayer.Coordinate = L.TileLayer.extend({
+            createTile: function (coords, done) {
+                var img = L.TileLayer.prototype.createTile.call(this, coords, done);
+                var div = document.createElement('div')
+                var textBox = document.createElement('div')
+                textBox.className = "textBox"
+                div.className = "box"
+
+
+                textBox.innerHTML = `
+                    <div>zoom: ${coords.z} </div>
+                    <div> x: ${coords.x} </div>
+                    <div> y : ${coords.y} </div>
+
+                
+                `
+                textBox.style.position = "absolution"
+
+                div.appendChild(img)
+                div.appendChild(textBox)
+
+                return div
+            },
+        });
+
+        L.tileLayer.coordinate = function (url) {
+            return new L.TileLayer.Coordinate(url);
+        }
+
+        var layer = L.tileLayer.coordinate('https://tile.openstreetmap.bzh/br/{z}/{x}/{y}.png').addTo(map);
+
+        //map.addLayer( L.tileLayer.Coordinate() );      
+
+
+        var crsMarker = null
+        function drawCenterMarker(){
+
+            if(crsMarker){
+                crsMarker.remove()
+            }
+
+            console.log(111111111111111)
+
+            var latlng = map.getCenter();
+
+            crsMarker = L.marker( latlng).addTo(map);
+
+            var point = L.CRS.EPSG3857.latLngToPoint(latlng , map.getZoom() )
+
+
+            var html = `<b> 经纬度: ${ latlng.lat.toFixed(2)} ,${ latlng.lng.toFixed(2)}  </b><br>
+
+            Leaflet坐标： ${ point.x.toFixed(2)} ,${ point.y.toFixed(2)}
+            
+            
+            .`
+
+            crsMarker.bindPopup(html).openPopup();
+        }
+
+
+
+ 
+
+
+
+
+        function info() {
+           
+
+            var bounds = layer._getTiledPixelBounds(map.getCenter());
+
+
+
+            clearTimeout(timer)
+            timer = setTimeout(()=>{
+                drawCenterMarker();
+
+                document.getElementById("text").innerHTML=`
+                    
+                    max:${bounds.max}  <br>   min:${bounds.min} 
+                `
+
+            },300)
+ 
+        }
+
+
+        map.on('load move moveend zoomend viewreset', info)
+
+        info();
+
+
+
+    </script>
+
+
+</body>
+
+</html>

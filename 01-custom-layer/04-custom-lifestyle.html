@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="../resources/leaflet-src.js"></script>
+    <link href="../resources/leaflet.css" rel="stylesheet">
+
+    <style>
+		html, body {
+			height: 100%;
+			margin: 0;
+		}
+		#map {
+			width: 600px;
+			height: 400px;
+            margin-top: 20px;
+            margin-left: 20px;
+
+		}
+	</style>
+ 
+    <title>Document</title>
+</head>
+<body>
+
+    <div id='map'></div>
+
+
+    <script type="text/javascript">
+
+        var map = L.map('map', {
+            crs: L.CRS.Simple,
+            center: [0, 0],
+            zoom: 1
+        });
+
+
+
+        L.TileLayer.Listener = L.TileLayer.extend({
+            onAdd: function(map) {
+                L.TileLayer.prototype.onAdd.call(this, map);
+                map.on('click', this.onCilck, this);
+			},
+
+            onRemove: function(map) {
+                L.TileLayer.prototype.onRemove.call(this, map);
+                map.off('click', this.onCilck, this);
+			},
+
+            onCilck: function(evt){
+                var latlng = evt.latlng;
+                var layerPoint = evt.layerPoint;
+
+                var div = document.createElement('div');
+                div.innerHTML = "latlng:" + latlng + "  layerPoint:" + layerPoint;
+                document.body.appendChild(div);
+            },
+ 
+            getTileUrl: function(coords) {
+                var i =  1 ;
+                return "../image/"+ i +".jpg"  ;
+            },
+        });    
+
+        L.tileLayer.Listener = function() {
+            return new L.TileLayer.Listener();
+        }
+    
+        map.addLayer( L.tileLayer.Listener() );      
+    
+ 
+                
+    </script>
+    
+    
+</body>
+</html>

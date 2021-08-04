@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+	
+	<title>Grid coordinates - Leaflet</title>
+
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+	<link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
+
+    <script src="../resources/leaflet-src.js"></script>
+    <link href="../resources/leaflet.css" rel="stylesheet">
+
+	<style>
+		html, body {
+			height: 100%;
+			margin: 0;
+		}
+		#map {
+			width: 550px;
+			height: 550px;
+		}
+	</style>
+
+	
+</head>
+<body>
+
+<div id='map'></div>
+
+<style>
+
+
+
+</style>
+
+<div id="info"  ></div>
+
+<script type="text/javascript">
+
+	var trd = ['23.455118246080986', '113.20645595965166'];
+
+
+	var map = L.map('map', {
+		center: ['23.455118246080986', '113.20645595965166'],
+		zoom: 1
+	});
+
+	var positron = L.tileLayer('https://tile.openstreetmap.bzh/br/{z}/{x}/{y}.png').addTo(map);
+
+	var polylineList = [];
+	function draw(){
+		var span = 20;
+		var style = {
+			color: 'red' ,
+			weight:1
+		}
+
+		polylineList.forEach(layer=>{
+			layer &&　layer.remove()
+		})
+		polylineList = [];
+
+		var markerOffsetLine = L.polyline([map.unproject([-1000, 0]), map.unproject([1000, 0])], style).addTo(map);
+		var iconOffsetLine =L.polyline([map.unproject([0, 0]), map.unproject([0, 1000])], style).addTo(map);
+
+		polylineList.push(markerOffsetLine);
+		polylineList.push(iconOffsetLine);
+
+		for(var x = -1000 ; x< 1000 ; x+=span){
+			var line =  L.polyline([map.unproject([x, 0]), map.unproject([x, 4])], style).addTo(map);
+			polylineList.push(line);
+		}
+
+		for(var y = -1000 ; y< 1000 ; y+=span){
+			var line =  L.polyline([map.unproject([0, y]), map.unproject([4, y])], style).addTo(map);
+			polylineList.push(line);
+		}
+
+	}
+
+	function info() {
+		draw()
+
+
+
+	}
+	map.on('load move moveend zoomend viewreset', info)
+
+	info();
+
+
+	var crsMarker = L.marker( new L.latLng( 23.455 ,113.2064)  ).addTo(map);
+	
+
+	
+	
+</script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+	
+	<title>Grid coordinates - Leaflet</title>
+
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+	<link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
+
+    <script src="../resources/leaflet-src.js"></script>
+    <link href="../resources/leaflet.css" rel="stylesheet">
+
+	<style>
+		html, body {
+			height: 100%;
+			margin: 0;
+		}
+		#map {
+			width: 550px;
+			height: 550px;
+		}
+	</style>
+
+	
+</head>
+<body>
+
+<div id='map'  ></div>
+
+<style>
+
+#map{
+	margin-top: 40px;
+	margin-left: 40px;
+}	
+
+#info {
+	position:absolute; 
+	top:0; 
+	right:0; 
+	width: 20em; 
+	height: 7.5em; 
+	background: rgba(255,255,255,.5); 
+	z-index:500; 
+	font: 12px Sans;
+}
+
+.crsMarker {
+	border-top: 2px green solid;
+	border-left: 2px green solid;
+}
+
+.orginMarker {
+	border-top: 2px orange solid;
+	border-left: 2px orange solid;
+}
+
+.my-div-icon{
+	font-size:15px;
+	/*background:red;*/
+	/*width:5px;*/
+	color:red;
+}
+
+
+.crsMarkerOrgin {
+	border-top: 2px #ffff0075 solid;
+	border-left: 2px #ffff0075 solid;
+}
+</style>
+
+<div id="info" style=""></div>
+
+<script type="text/javascript">
+
+	var trd = ['23.455118246080986', '113.20645595965166'];
+
+
+	var map = L.map('map', {
+		center: ['70.72897946208789', '-74.0625'],
+		zoom: 3
+	});
+
+	var positron = L.tileLayer('https://tile.openstreetmap.bzh/br/{z}/{x}/{y}.png').addTo(map);
+
+
+	
+
+	function createMarker( opt ){
+		let { className    } = opt;
+		var marker = null;
+		function fn(latlng){
+			if( marker){
+				marker.remove()
+			}
+			var params = className ?   {
+				icon: L.divIcon({ 
+					className: className,
+					iconAnchor: [0, 0]
+				})
+			} : {}
+			marker = L.marker( latlng, params ).addTo(map);
+			return marker;
+		}
+		return fn
+	}
+
+	var drawPixelOriginMarker = createMarker({ className:'crsMarkerOrgin'  });
+
+ 
+
+	var polylineList = [];
+	function draw(){
+		var span = 20;
+		var style = {
+			color: 'red' ,
+			weight:1
+		}
+		polylineList.forEach(layer=>{
+			layer &&　layer.remove()
+		})
+		polylineList = [];
+
+		var markerOffsetLine = L.polyline([map.unproject([-1000, 0]), map.unproject([1000, 0])], style).addTo(map);
+		var iconOffsetLine =L.polyline([map.unproject([0, 0]), map.unproject([0, 1000])], style).addTo(map);
+
+		polylineList.push(markerOffsetLine);
+		polylineList.push(iconOffsetLine);
+
+		for(var x = -1000 ; x< 1000 ; x+=span){
+			var line =  L.polyline([map.unproject([x, 0]), map.unproject([x, 4])], style).addTo(map);
+			polylineList.push(line);
+
+			if(x%100===0 &&　x>0　　){
+				const txt = drawText(map.unproject([x - 0, 20]) , x  )
+				polylineList.push(txt);
+			}
+		}
+
+		for(var y = -1000 ; y< 1000 ; y+=span){
+			var line =  L.polyline([map.unproject([0, y]), map.unproject([4, y])], style).addTo(map);
+			polylineList.push(line);
+
+			if(y%100===0 &&　y>0　　){
+				const txt = drawText(map.unproject([20, y - 0 ]) , y  )
+				polylineList.push(txt);
+			}
+		}
+
+	}
+	
+	
+	function drawText(lat , text){
+		var myIcon = L.divIcon({
+            html: text,
+            className: 'my-div-icon',
+            iconSize:30
+        });
+		return L.marker(lat, { icon: myIcon }).addTo(map);
+	}
+
+	
+
+
+	function info() {
+	 	var crsMarker = L.marker( map.getCenter()).addTo(map);
+		draw()
+		drawPixelOriginMarker( map.unproject( map.getPixelOrigin() ));
+	}
+
+
+	map.on('load move moveend zoomend viewreset', info)
+
+	info();
+
+	
+	
+</script>
+
+
+
+</body>
+</html>

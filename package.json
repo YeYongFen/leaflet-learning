@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "watch": "node watch.js   ",
-    "serve": " serve ./dist   ",
+    "serve": " serve ./",
     "build": "node build.js" ,
     "login" : "cloudbase  login" , 
     "public" : "cloudbase hosting:deploy ./dist leaflet-demo -e learning-5gx6cecp931d24b9    "
