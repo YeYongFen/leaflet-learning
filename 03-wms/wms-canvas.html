@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="../resources/leaflet-src.js"></script>
+    <link href="../resources/leaflet.css" rel="stylesheet">
+
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+        }
+
+        #map {
+            width: 800px;
+            height: 600px;
+        }
+    </style>
+
+    <title>Document</title>
+</head>
+
+<body>
+
+    <div id='map'></div>
+
+    <div id="tt"></div>
+
+
+
+    <script type="text/javascript">
+
+
+
+
+    </script>
+
+
+    <script type="text/javascript">
+
+        let a1, a2;
+
+        var map = L.map('map', {
+            center: [23.4460, 113.2795],
+            zoom: 8
+        });
+
+        L.GridLayer.CanvasWmsLayer = L.Canvas.extend({
+
+            options: {
+                padding: 0
+            },
+
+            initialize: function (url, options, projection) {
+                let defaultWmsParams = {
+                    service: 'WMS',
+                    layers: '',
+                    styles: '',
+                    format: 'image/png',
+                    transparent: false,
+                    version: '1.1.1'
+                }
+                this._url = url;
+                this.wmsParams = { ...defaultWmsParams, ...options };
+
+                this.projection = projection || L.CRS.EPSG4326
+            },
+
+            onAdd: function () {
+                L.Canvas.prototype.onAdd.call(this);
+
+            },
+
+            _update() {
+                // L.Canvas.prototype._update.call(this);
+
+                if (this._map._animatingZoom && this._bounds) { return; }
+
+                L.Renderer.prototype._update.call(this);
+
+                var b = this._bounds,
+                    container = this._container,
+                    size = b.getSize(),
+                    m = L.Browser.retina ? 2 : 1;
+
+                L.DomUtil.setPosition(container, b.min);
+
+                // set canvas size (also clearing it); use double size on retina
+                container.width = m * size.x;
+                container.height = m * size.y;
+                container.style.width = size.x + 'px';
+                container.style.height = size.y + 'px';
+
+                this.doGetMap()
+            },
+
+            genRequestParame() {
+                let map = this._map;
+                let bounds = map.getBounds();
+                let projection = this.projection;
+                let size = map.getSize();
+
+                let sw = bounds.getSouthWest();
+                let ne = bounds.getNorthEast();
+                let _sw = projection.project(sw);
+                let _ne = projection.project(ne);
+                let bbox = [_sw.x, _sw.y, _ne.x, _ne.y].join(",");
+
+                let { version } = this.wmsParams
+                return ({
+                    ...this.wmsParams,
+                    bbox,
+                    width: size.x,
+                    height: size.y,
+                    [version === '1.3.0' ? 'crs' : 'srs']: this.projection.code
+                })
+            },
+
+            doGetMap() {
+
+                let obj = {
+                    request: 'GetMap',
+                    ...this.genRequestParame()
+                }
+
+                let url = this._buildImageURL(obj)
+
+                if(this.image){  //取消未成功发送的请求
+                    this.image.src= ''
+                }
+
+                let ctx = this._ctx;
+
+                let image = new Image();
+                image.crossOrigin = "anonymous";
+                image.onload = function () {
+                    ctx.drawImage(image, 0, 0, image.width, image.height);
+                    this.image = null
+                };
+                image.src = url;
+
+                this.image = image
+
+
+
+
+
+            },
+
+
+            _buildImageURL(params) {
+                let version = params.version || '1.1.1'
+                const baseParams = this.wmsParams
+                const opt = {
+                    ...baseParams, ...params
+                }
+                let url = this._url + L.Util.getParamString(params);
+                return url;
+            }
+
+        });
+
+        L.gridLayer.canvasWmsLayer = function (...args) {
+            return new L.GridLayer.CanvasWmsLayer(...args);
+        };
+
+        let layer = L.gridLayer.canvasWmsLayer('https://ows.terrestris.de/osm/service', {
+            layers: 'OSM-WMS',
+            version: '1.3.0',
+
+        }, L.CRS.EPSG3857)
+
+        map.addLayer(layer);
+
+    </script>
+
+
+</body>
+
+</html>
